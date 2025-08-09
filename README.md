@@ -66,7 +66,8 @@ Open `index.html` and start typing your math expressions or texts. Click "Proces
 
 ### Diagrams
 
-![Workflow](path/to/workflow_diagram.png)  
+![Workflow](path/to/workflow_diagram.png) <img width="1536" height="1024" alt="e4ca2dd4-79f8-40c4-8a29-78fbdfded592" src="https://github.com/user-attachments/assets/2717d8e0-876a-4752-9a58-a3cceae450ad" />
+ 
 *Illustrates how input is processed stepwise and results rendered with progress feedback.*
 
 ---
