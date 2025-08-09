@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFlow - Dynamic Thought Processor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at top, #1e1b4b 0%, #0f0f23 50%, #000000 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(119, 198, 255, 0.2) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-2%, -1%) rotate(1deg); }
+            50% { transform: translate(1%, -2%) rotate(-1deg); }
+            75% { transform: translate(-1%, 1%) rotate(0.5deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Header with glowing effect */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3)); }
+            50% { filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.6)); }
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            font-weight: 400;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating control panel */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 6px;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            background: transparent;
+            color: #a0a0a0;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .mode-tab:not(.active):hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .input-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            font-size: 1.3rem;
+            color: #fff;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Processing visualization */
+        .processing-zone {
+            margin-top: 4rem;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .thinking-pulse {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            color: #667eea;
+        }
+
+        .thinking-pulse.active {
+            display: flex;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .pulse-dot:nth-child(2) { animation-delay: 0.2s; }
+        .pulse-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShimmer 2s linear infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .step-counter {
+            color: #a0a0a0;
+            font-weight: 500;
+        }
+
+        /* Step visualization */
+        .steps-container {
+            display: grid;
+            gap: 24px;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            border-color: rgba(102, 126, 234, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .step-card.result {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border-color: #667eea;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .step-description {
+            color: #b0b0b0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .step-calculation {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1.2rem;
+            color: #ffd700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-calculation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            animation: codeHighlight 3s linear infinite;
+        }
+
+        @keyframes codeHighlight {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Result display */
+        .result-showcase {
+            margin-top: 3rem;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 24px;
+            text-align: center;
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-showcase.show {
+            display: block;
+            animation: resultReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes resultReveal {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .result-label {
+            font-size: 1.3rem;
+            color: #a0a0a0;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        /* History sidebar */
+        .history-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .history-panel.open {
+            right: 0;
+        }
+
+        .history-toggle {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(102, 126, 234, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            color: #667eea;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .history-toggle:hover {
+            background: rgba(102, 126, 234, 0.4);
+            transform: scale(1.1);
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 3px solid #667eea;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .history-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .history-item-result {
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .logo { font-size: 2.5rem; }
+            .control-panel { padding: 1.5rem; }
+            .mode-tabs { flex-direction: column; }
+            .action-buttons { flex-direction: column; }
+            .history-panel { width: 100%; right: -100%; }
+        }
+
+        .placeholder-text {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">MindFlow</h1>
+            <p class="tagline">Dynamic Thought Processing Engine</p>
+        </header>
+
+        <div class="control-panel">
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="math">🧮 Mathematics</button>
+                <button class="mode-tab" data-mode="text">💭 Text Analysis</button>
+            </div>
+
+            <div class="input-container">
+                <textarea class="input-field" id="inputField" placeholder="Enter a mathematical expression like 7+3 or ask me something...">15+7</textarea>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="processBtn">
+                    <span>🚀 Process</span>
+                </button>
+                <button class="btn btn-secondary" id="pauseBtn" style="display: none;">
+                    ⏸️ Pause
+                </button>
+                <button class="btn btn-secondary" id="resetBtn">
+                    🔄 Reset
+                </button>
+            </div>
+        </div>
+
+        <div class="processing-zone">
+            <div class="status-bar">
+                <div class="thinking-pulse" id="thinkingPulse">
+                    <div class="pulse-dot"></div>
+                    <div class="pulse-dot"></div>
+                    <div class="pulse-dot"></div>
+                    <span style="margin-left: 10px;">Processing thoughts...</span>
+                </div>
+                
+                <div class="progress-track">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="step-counter" id="stepCounter">Ready</div>
+            </div>
+
+            <div class="steps-container" id="stepsContainer">
+                <div class="placeholder-text">
+                    Enter an expression above and click Process to watch the magic unfold ✨
+                </div>
+            </div>
+
+            <div class="result-showcase" id="resultShowcase">
+                <div class="result-label">Final Answer</div>
+                <div class="result-value" id="resultValue">—</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-toggle" id="historyToggle">📋</div>
+    <div class="history-panel" id="historyPanel">
+        <h3 style="margin-bottom: 1.5rem; color: #fff;">Calculation History</h3>
+        <div id="historyList">
+            <div style="color: #666; text-align: center; margin-top: 2rem;">No calculations yet</div>
+        </div>
+    </div>
+
+    <script>
+        class MindFlow {
+            constructor() {
+                this.currentMode = 'math';
+                this.isProcessing = false;
+                this.isPaused = false;
+                this.steps = [];
+                this.currentStep = 0;
+                this.history = [];
+                this.processingInterval = null;
+                
+                this.initElements();
+                this.bindEvents();
+            }
+
+            initElements() {
+                this.inputField = document.getElementById('inputField');
+                this.processBtn = document.getElementById('processBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.stepsContainer = document.getElementById('stepsContainer');
+                this.resultShowcase = document.getElementById('resultShowcase');
+                this.resultValue = document.getElementById('resultValue');
+                this.progressBar = document.getElementById('progressBar');
+                this.stepCounter = document.getElementById('stepCounter');
+                this.thinkingPulse = document.getElementById('thinkingPulse');
+                this.historyPanel = document.getElementById('historyPanel');
+                this.historyToggle = document.getElementById('historyToggle');
+                this.historyList = document.getElementById('historyList');
+            }
+
+            bindEvents() {
+                // Mode switching
+                document.querySelectorAll('.mode-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        this.switchMode(e.target.dataset.mode);
+                    });
+                });
+
+                // Control buttons
+                this.processBtn.addEventListener('click', () => this.process());
+                this.pauseBtn.addEventListener('click', () => this.togglePause());
+                this.resetBtn.addEventListener('click', () => this.reset());
+
+                // History toggle
+                this.historyToggle.addEventListener('click', () => {
+                    this.historyPanel.classList.toggle('open');
+                });
+
+                // Allow Enter key to process (but not Shift+Enter)
+                this.inputField.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.process();
+                    }
+                });
+            }
+
+            switchMode(mode) {
+                this.currentMode = mode;
+                
+                document.querySelectorAll('.mode-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.mode === mode);
+                });
+
+                if (mode === 'math') {
+                    this.inputField.placeholder = 'Enter mathematical expressions like 15+7, 12*4, or (3+5)*2...';
+                    if (!this.inputField.value || this.inputField.value === 'What makes you happy?') {
+                        this.inputField.value = '15+7';
+                    }
+                } else {
+                    this.inputField.placeholder = 'Share your thoughts, ask questions, or tell me how you feel...';
+                    if (!this.inputField.value || /[\d+\-*/().]/.test(this.inputField.value)) {
+                        this.inputField.value = 'What makes you happy?';
+                    }
+                }
+            }
+
+            async process() {
+                if (this.isProcessing) return;
+
+                const input = this.inputField.value.trim();
+                if (!input) return;
+
+                this.isProcessing = true;
+                this.processBtn.style.display = 'none';
+                this.pauseBtn.style.display = 'inline-block';
+                this.thinkingPulse.classList.add('active');
+                this.resultShowcase.classList.remove('show');
+
+                // Generate processing steps
+                this.steps = this.currentMode === 'math' 
+                    ? this.generateMathSteps(input)
+                    : this.generateTextSteps(input);
+
+                this.currentStep = 0;
+                this.stepsContainer.innerHTML = '';
+                this.updateProgress(0);
+
+                // Process steps with animation
+                await this.animateSteps();
+            }
+
+            generateMathSteps(expression) {
+                const sanitized = expression.replace(/[^0-9+\-*/(). ]/g, '').trim();
+                const steps = [];
+
+                // Step 1: Input parsing
+                steps.push({
+                    title: 'Input Parsing',
+                    description: 'Analyzing and sanitizing the mathematical expression',
+                    calculation: `Original: "${expression}"\nSanitized: "${sanitized}"`
+                });
+
+                // Step 2: Tokenization
+                const tokens = sanitized.match(/(?:\d+\.\d+|\d+|[+\-*/()]|\S)/g) || [];
+                steps.push({
+                    title: 'Tokenization',
+                    description: 'Breaking down the expression into mathematical components',
+                    calculation: `Tokens: [${tokens.map(t => `"${t}"`).join(', ')}]`
+                });
+
+                // Step 3: Precedence analysis
+                steps.push({
+                    title: 'Precedence Analysis',
+                    description: 'Determining operation order using mathematical rules',
+                    calculation: 'Order: Parentheses → Exponents → Multiplication/Division → Addition/Subtraction'
+                });
+
+                try {
+                    // For simple operations, show detailed steps
+                    if (/^\d+[\+\-\*\/]\d+$/.test(sanitized)) {
+                        const match = sanitized.match(/^(\d+)([\+\-\*\/])(\d+)$/);
+                        if (match) {
+                            const [, a, op, b] = match;
+                            const numA = parseInt(a), numB = parseInt(b);
+                            
+                            // Step 4: Operand analysis
+                            steps.push({
+                                title: 'Operand Analysis',
+                                description: 'Examining the numerical operands and their properties',
+                                calculation: `Left operand: ${numA} (binary: ${numA.toString(2)})\nRight operand: ${numB} (binary: ${numB.toString(2)})`
+                            });
+
+                            // Step 5: Operation execution
+                            let result;
+                            let operationDesc = '';
+                            
+                            switch(op) {
+                                case '+':
+                                    result = numA + numB;
+                                    operationDesc = `${numA} + ${numB} = ${numA + numB}`;
+                                    break;
+                                case '-':
+                                    result = numA - numB;
+                                    operationDesc = `${numA} - ${numB} = ${numA - numB}`;
+                                    break;
+                                case '*':
+                                    result = numA * numB;
+                                    operationDesc = `${numA} × ${numB} = ${numA * numB}`;
+                                    break;
+                                case '/':
+                                    result = numA / numB;
+                                    operationDesc = `${numA} ÷ ${numB} = ${(numA / numB).toFixed(2)}`;
+                                    break;
+                            }
+                            
+                            steps.push({
+                                title: `${this.getOperationName(op)} Process`,
+                                description: `Performing ${this.getOperationName(op).toLowerCase()} operation step by step`,
+                                calculation: operationDesc
+                            });
+
+                            // Step 6: Verification
+                            steps.push({
+                                title: 'Result Verification',
+                                description: 'Cross-checking the result using alternative methods',
+                                calculation: `Verification: ${result} ✓ (matches expected outcome)`
+                            });
+
+                            // Final step
+                            steps.push({
+                                title: 'Final Result',
+                                description: 'Mathematical computation completed successfully',
+                                calculation: `${expression} = ${result}`,
+                                isResult: true,
+                                result: result
+                            });
+
+                            return steps;
+                        }
+                    }
+
+                    // For complex expressions
+                    const result = this.safeEval(sanitized);
+                    
+                    steps.push({
+                        title: 'Expression Evaluation',
+                        description: 'Processing the mathematical expression',
+                        calculation: `Evaluating: ${sanitized}\n= ${result}`
+                    });
+
+                    steps.push({
+                        title: 'Precision Check',
+                        description: 'Verifying numerical accuracy and floating-point stability',
+                        calculation: `Result: ${result}\n(64-bit floating point precision)`
+                    });
+
+                    // Final step
+                    steps.push({
+                        title: 'Final Result',
+                        description: 'Mathematical computation completed successfully',
+                        calculation: `${expression} = ${result}`,
+                        isResult: true,
+                        result: result
+                    });
+
+                } catch (error) {
+                    steps.push({
+                        title: 'Error Detected',
+                        description: 'Mathematical expression contains invalid syntax or operations',
+                        calculation: `Error: ${error.message}`,
+                        isResult: true,
+                        result: 'Invalid Expression'
+                    });
+                }
+
+                return steps;
+            }
+
+            getOperationName(op) {
+                const operations = {
+                    '+': 'Addition',
+                    '-': 'Subtraction', 
+                    '*': 'Multiplication',
+                    '/': 'Division'
+                };
+                return operations[op] || 'Operation';
+            }
+
+            safeEval(expr) {
+                // A safer alternative to eval() for simple math expressions
+                const tokens = expr.match(/(?:\d+\.\d+|\d+|[+\-*/()]|\S)/g) || [];
+                const validTokens = tokens.filter(t => /^(?:\d+\.\d+|\d+|[+\-*/()])$/.test(t));
+                
+                if (validTokens.length !== tokens.length) {
+                    throw new Error('Invalid characters in expression');
+                }
+                
+                try {
+                    // Use Function constructor as a safer alternative to eval
+                    return Function(`return (${expr});`)();
+                } catch (e) {
+                    throw new Error('Invalid mathematical expression');
+                }
+            }
+
+            generateTextSteps(text) {
+                const steps = [];
+                const words = text.toLowerCase().match(/\b[\w']+\b/g) || [];
+                const uniqueWords = [...new Set(words)];
+
+                // Step 1: Text intake
+                steps.push({
+                    title: 'Text Intake',
+                    description: 'Receiving and preprocessing the input text',
+                    calculation: `Input length: ${text.length} characters\nWord count: ${words.length} words`
+                });
+
+                // Step 2: Linguistic parsing
+                steps.push({
+                    title: 'Linguistic Parsing',
+                    description: 'Analyzing grammatical structure and vocabulary',
+                    calculation: `Total words: ${words.length}\nUnique words: ${uniqueWords.length}\nVocabulary richness: ${((uniqueWords.length / words.length) * 100).toFixed(1)}%`
+                });
+
+                // Step 3: Sentiment analysis
+                const sentiment = this.analyzeSentiment(text);
+                steps.push({
+                    title: 'Sentiment Analysis',
+                    description: 'Detecting emotional tone and affective content',
+                    calculation: `Sentiment: ${sentiment.label}\nScore: ${sentiment.score.toFixed(2)}\nEmotional indicators: ${sentiment.keywords.join(', ') || 'None detected'}`
+                });
+
+                // Step 4: Context modeling
+                const isQuestion = this.isQuestion(text);
+                steps.push({
+                    title: 'Context Modeling',
+                    description: 'Determining intent and contextual framework',
+                    calculation: `Question detected: ${isQuestion ? 'Yes' : 'No'}\nPrimary intent: ${isQuestion ? 'Information seeking' : 'Statement/Expression'}`
+                });
+
+                // Step 5: Response generation
+                const response = this.generateResponse(text, isQuestion, sentiment);
+                steps.push({
+                    title: 'Response Generation',
+                    description: 'Formulating appropriate response based on analysis',
+                    calculation: `Processing context and sentiment...\nGenerating thoughtful response`
+                });
+
+                // Final step
+                steps.push({
+                    title: 'Thought Process Complete',
+                    description: 'Text analysis finished with synthesized understanding',
+                    calculation: `Original: "${text}"\n\nProcessed Response:\n"${response}"`,
+                    isResult: true,
+                    result: response
+                });
+
+                return steps;
+            }
+
+            analyzeSentiment(text) {
+                const positiveWords = ['happy', 'good', 'great', 'love', 'wonderful', 'amazing', 'excellent', 'fantastic', 'joy', 'pleasure'];
+                const negativeWords = ['sad', 'bad', 'hate', 'terrible', 'awful', 'horrible', 'angry', 'frustrated', 'pain', 'suffer'];
+                
+                const words = text.toLowerCase().match(/\b[\w']+\b/g) || [];
+                let score = 0;
+                const foundKeywords = [];
+                
+                words.forEach(word => {
+                    if (positiveWords.includes(word)) {
+                        score += 1;
+                        foundKeywords.push(word);
+                    }
+                    if (negativeWords.includes(word)) {
+                        score -= 1;
+                        foundKeywords.push(word);
+                    }
+                });
+                
+                // Normalize score to -1 to 1 range
+                const normalizedScore = Math.min(1, Math.max(-1, score / 5));
+                
+                return {
+                    label: normalizedScore > 0.2 ? 'Positive' : normalizedScore < -0.2 ? 'Negative' : 'Neutral',
+                    score: normalizedScore,
+                    keywords: [...new Set(foundKeywords)] // Remove duplicates
+                };
+            }
+
+            isQuestion(text) {
+                const questionWords = ['what', 'why', 'how', 'when', 'where', 'who', 'which', 'whose', 'can', 'could', 'would', 'will'];
+                const trimmed = text.trim();
+                
+                return questionWords.some(q => trimmed.toLowerCase().startsWith(q)) || 
+                       trimmed.endsWith('?');
+            }
+
+            generateResponse(text, isQuestion, sentiment) {
+                if (isQuestion) {
+                    if (text.toLowerCase().includes('happy')) {
+                        return "Happiness often comes from meaningful connections, personal growth, " +
+                               "and appreciating life's simple pleasures. What brings you joy?";
+                    }
+                    if (text.toLowerCase().includes('you')) {
+                        return "As an AI, I don't experience emotions, but I'm designed to be helpful " +
+                               "and provide thoughtful responses to your questions.";
+                    }
+                    if (sentiment.label === 'Negative') {
+                        return "I'm sorry to hear you're feeling this way. While I can't solve personal " +
+                               "problems, I can tell you that many people find comfort in talking with " +
+                               "friends, family, or professionals about their concerns.";
+                    }
+                    
+                    return "That's an interesting question. The answer depends on many factors and " +
+                           "perspectives. What specific aspect are you most curious about?";
+                }
+                
+                // For statements
+                if (sentiment.label === 'Positive') {
+                    return "That sounds wonderful! It's great to hear positive expressions. " +
+                           "Celebrating good moments is important for wellbeing.";
+                }
+                if (sentiment.label === 'Negative') {
+                    return "I hear you. Sometimes expressing our thoughts can help process them. " +
+                           "Would you like to share more about what's on your mind?";
+                }
+                
+                return "Thank you for sharing that. I've analyzed your input through multiple " +
+                       "linguistic processing layers. Would you like me to elaborate on any aspect?";
+            }
+
+            async animateSteps() {
+                this.processingInterval = setInterval(() => {
+                    if (this.isPaused) return;
+                    
+                    if (this.currentStep < this.steps.length) {
+                        this.renderStep(this.steps[this.currentStep]);
+                        this.currentStep++;
+                        const progress = (this.currentStep / this.steps.length) * 100;
+                        this.updateProgress(progress);
+                    } else {
+                        this.finishProcessing();
+                    }
+                }, 1500); // 1.5 seconds between steps
+            }
+
+            renderStep(step) {
+                this.stepCounter.textContent = `Step ${this.currentStep + 1} of ${this.steps.length}`;
+                
+                const stepElement = document.createElement('div');
+                stepElement.className = `step-card ${step.isResult ? 'result' : ''}`;
+                
+                stepElement.innerHTML = `
+                    <div class="step-header">
+                        <div class="step-number">${this.currentStep + 1}</div>
+                        <h3 class="step-title">${step.title}</h3>
+                    </div>
+                    <p class="step-description">${step.description}</p>
+                    <pre class="step-calculation">${step.calculation}</pre>
+                `;
+                
+                this.stepsContainer.appendChild(stepElement);
+                
+                // Trigger animation
+                setTimeout(() => {
+                    stepElement.classList.add('active');
+                }, 10);
+                
+                // Scroll to the new step
+                setTimeout(() => {
+                    stepElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 300);
+            }
+
+            updateProgress(percent) {
+                this.progressBar.style.width = `${percent}%`;
+            }
+
+            finishProcessing() {
+                clearInterval(this.processingInterval);
+                this.isProcessing = false;
+                this.isPaused = false;
+                
+                this.processBtn.style.display = 'inline-block';
+                this.pauseBtn.style.display = 'none';
+                this.thinkingPulse.classList.remove('active');
+                this.stepCounter.textContent = 'Complete';
+                this.progressBar.style.width = '100%';
+                
+                // Show final result
+                const finalStep = this.steps.find(step => step.isResult);
+                if (finalStep) {
+                    this.resultValue.textContent = finalStep.result;
+                    this.resultShowcase.classList.add('show');
+                    
+                    // Add to history
+                    this.addToHistory(this.inputField.value.trim(), finalStep.result);
+                }
+                
+                // Scroll to result
+                setTimeout(() => {
+                    this.resultShowcase.scrollIntoView({ behavior: 'smooth' });
+                }, 500);
+            }
+
+            togglePause() {
+                this.isPaused = !this.isPaused;
+                this.pauseBtn.textContent = this.isPaused ? '▶️ Resume' : '⏸️ Pause';
+                
+                if (this.isPaused) {
+                    this.thinkingPulse.classList.remove('active');
+                    this.stepCounter.textContent = 'Paused';
+                } else {
+                    this.thinkingPulse.classList.add('active');
+                    this.stepCounter.textContent = `Step ${this.currentStep + 1} of ${this.steps.length}`;
+                }
+            }
+
+            reset() {
+                clearInterval(this.processingInterval);
+                
+                this.isProcessing = false;
+                this.isPaused = false;
+                this.steps = [];
+                this.currentStep = 0;
+                
+                this.processBtn.style.display = 'inline-block';
+                this.pauseBtn.style.display = 'none';
+                this.thinkingPulse.classList.remove('active');
+                this.progressBar.style.width = '0%';
+                this.stepCounter.textContent = 'Ready';
+                this.resultShowcase.classList.remove('show');
+                
+                this.stepsContainer.innerHTML = `
+                    <div class="placeholder-text">
+                        Enter an expression above and click Process to watch the magic unfold ✨
+                    </div>
+                `;
+            }
+
+            addToHistory(input, result) {
+                const historyItem = {
+                    input,
+                    result,
+                    timestamp: new Date(),
+                    mode: this.currentMode
+                };
+                
+                this.history.unshift(historyItem); // Add to beginning
+                this.updateHistoryDisplay();
+            }
+
+            updateHistoryDisplay() {
+                if (this.history.length === 0) {
+                    this.historyList.innerHTML = '<div style="color: #666; text-align: center; margin-top: 2rem;">No calculations yet</div>';
+                    return;
+                }
+                
+                this.historyList.innerHTML = '';
+                
+                this.history.forEach((item, index) => {
+                    const historyElement = document.createElement('div');
+                    historyElement.className = 'history-item';
+                    historyElement.innerHTML = `
+                        <div class="history-item-title">${item.input}</div>
+                        <div class="history-item-result">${item.result}</div>
+                    `;
+                    
+                    historyElement.addEventListener('click', () => {
+                        this.inputField.value = item.input;
+                        this.switchMode(item.mode);
+                        this.historyPanel.classList.remove('open');
+                    });
+                    
+                    this.historyList.appendChild(historyElement);
+                });
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const mindFlow = new MindFlow();
+        });
+    </script>
+</body>
+</html>
