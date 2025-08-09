@@ -1,3 +1,5 @@
+<img width="3188" height="1202" alt="image" src="https://github.com/user-attachments/assets/3678634b-42dc-4a17-8eb4-0f6beec98253" />
+
 # MindFlow 🎯
 
 ## Basic Details  
