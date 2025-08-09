@@ -52,13 +52,16 @@ Open `index.html` and start typing your math expressions or texts. Click "Proces
 
 ### Screenshots
 
-![Stepwise Math Breakdown]((https://drive.google.com/file/d/1qg8U_mSI866eMZRvEOgI6PpMIc946ad2/view?usp=sharing))  
+![Stepwise Math Breakdown]((https://drive.google.com/file/d/1qg8U_mSI866eMZRvEOgI6PpMIc946ad2/view?usp=sharing))<img width="1834" height="833" alt="Screenshot 2025-08-09 080822" src="https://github.com/user-attachments/assets/a9458757-aefd-42b1-a5eb-1d237b15c94c" />
+  
 *Shows detailed animated steps of solving a math problem.*
 
-![Text Sentiment Analysis]((https://drive.google.com/file/d/1o3m-N-dqvKz6OL5mj7TOiPH-YmVcLdEV/view?usp=sharing))  
+![Text Sentiment Analysis]((https://drive.google.com/file/d/1o3m-N-dqvKz6OL5mj7TOiPH-YmVcLdEV/view?usp=sharing))  <img width="1846" height="873" alt="Screenshot 2025-08-09 080902" src="https://github.com/user-attachments/assets/f4d2bc41-e27f-4499-ba07-17417ee20993" />
+
 *Displays sentiment and response generation for user text input.*
 
-![History Panel]((https://drive.google.com/file/d/1PmM_pc5h4k58I2ClxrK-ZCylQl4VqV7c/view?usp=sharing))  
+![History Panel]((https://drive.google.com/file/d/1PmM_pc5h4k58I2ClxrK-ZCylQl4VqV7c/view?usp=sharing))  <img width="1852" height="862" alt="Screenshot 2025-08-09 080936" src="https://github.com/user-attachments/assets/b8735e10-0554-4713-9920-5bc42339f60f" />
+
 *Stores your past calculations and texts for easy recall.*
 
 ### Diagrams
